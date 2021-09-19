@@ -20,11 +20,26 @@ class Vkdownloader:
         photos_search_url = self.url + 'photos.get'
         photos_search_params = {
             'album_id': 'profile',
+            'owner_id': owner_id,
             'extended': 1
         }
         req = requests.get(photos_search_url, params={**self.params, **photos_search_params}).json()
         return req['response']['items']
 
+    def search_id(self, user_ids):
+        search_id_url = self.url + 'users.search'
+        search_id_params = {
+            'q': user_ids,
+            'fields': id
+        }
+        req = requests.get(search_id_url, params={**self.params, **search_id_params}).json()
+
+        if req['response']['count'] == 0:
+            print('Такого аккаунта нет')
+            return exit
+        else:
+            owner_id = req['response']['items'][0]['id']
+            return owner_id
 
 # Класс для загрузки фото на Яндекс
 class YaUploader:
@@ -77,7 +92,7 @@ def vk_yandex_upload():
 
     # поиск фото в вк
     vk_client = Vkdownloader(token_vk, '5.131')
-    user_ids = input('Напишите номер id: ')
+    user_ids = input('Напишите номер id или имя пользователя: ')
     if user_ids.isdigit() == True:
         owner_id = int(user_ids)
     else:
