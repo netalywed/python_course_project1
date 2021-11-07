@@ -51,15 +51,15 @@ class YaUploader:
             'Authorization': self.token
         }
 
-    def create_folder(self):
-        name_folder = input(f'Как назвать папку? ')
+    def create_folder(self, name_folder):
+        # name_folder = input(f'Как назвать папку? ')
         req = requests.put(self.API_BASE_URL + '/v1/disk/resources?path=' + name_folder, headers=self.headers)
         # print(req)
         if req.status_code == 409:
             name_folder = name_folder + '(1)'
             req = requests.put(self.API_BASE_URL + '/v1/disk/resources?path=' + name_folder, headers=self.headers)
             print(f'Такая папка уже существует, документы будут загружены в папку {name_folder}')
-        return name_folder
+        return req.status_code # name_folder для тестирования заменить на req.status_code
 
     def upload_photos(self, name_folder, name_file, path_to_file: str):
         name_folder_file = f'{name_folder}/{name_file}.jpeg'
@@ -132,7 +132,8 @@ def vk_yandex_upload():
     # запускаем аплоадер
     uploader = YaUploader(token_yandex)
     # создаем папку для фото
-    name_folder = uploader.create_folder()
+    name = input(f'Как назвать папку? ')
+    name_folder = uploader.create_folder(name)
 
     # Загрузка фото
     x = 0
@@ -155,3 +156,4 @@ def vk_yandex_upload():
 if __name__ == "__main__":
 
     vk_yandex_upload()
+
